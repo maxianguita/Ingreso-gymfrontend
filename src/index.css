@@ -1,7 +1,33 @@
-/* Reseteamos los márgenes y padding */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@import "tailwindcss";
+
+:root { font-family: ui-sans-serif, system-ui, sans-serif; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid #e85060;
+  outline-offset: 4px;
 }
 
+/* Regular */
+@font-face {
+  font-family: "MiFuente";
+  src:
+    /* Si más adelante creás el woff2, ponelo primero para mejor performance */
+    /* url("/fonts/FreeRoyalty.woff2") format("woff2"), */
+    url("/fonts/FreeRoyalty.ttf") format("truetype"),
+    url("/fonts/RailwayGank-DEMO.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold (opcional) */
+@font-face {
+  font-family: "MiFuente";
+  src:
+    /* url("/fonts/FreeRoyalty-Bold.woff2") format("woff2"), */
+    url("/fonts/FreeRoyalty.ttf") format("truetype"),
+    url("/fonts/RailwayGank-DEMO.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
