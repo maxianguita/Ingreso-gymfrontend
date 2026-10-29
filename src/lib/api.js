@@ -1,5 +1,9 @@
 // src/lib/api.js
-export const API_BASE = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? "http://localhost:3001" : window.location.origin)).replace(/\/$/, "");
+// En producción Vercel deriva /api y /auth a Render, conservando las cookies
+// en el mismo origen que la página. Las URLs locales se usan solo en desarrollo.
+export const API_BASE = (import.meta.env.DEV
+  ? (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE || "http://localhost:3001")
+  : window.location.origin).replace(/\/$/, "");
 const API = API_BASE;
 
 export async function authenticatedFetch(url, options = {}) {
