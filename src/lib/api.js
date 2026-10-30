@@ -12,16 +12,22 @@ export async function authenticatedFetch(url, options = {}) {
   return response;
 }
 
-export async function api(path, { method='GET', body, headers } = {}) {
+export async function api(path, { method='GET', body, headers, signal } = {}) {
   const res = await fetch(API + path, {
     credentials: 'include',
     method,
+    signal,
     headers: { 'Content-Type': 'application/json', ...(headers || {}) },
     body: body ? JSON.stringify(body) : undefined
   });
   const data = await res.json().catch(()=> ({}));
   if (!res.ok) {
     throw Object.assign(new Error(data.error || data.message || `HTTP ${res.status}`), { status: res.status, data });
+  }
+  if (['/auth/login', '/auth/logout', '/auth/reception'].includes(path)) {
+    window.dispatchEvent(new CustomEvent('gym-session-changed', {
+      detail: path === '/auth/logout' ? null : data,
+    }));
   }
   return data;
 }

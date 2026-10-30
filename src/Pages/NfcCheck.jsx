@@ -22,6 +22,8 @@ function fmtDate(dateStr) {
 export default function NfcCheck() {
   const session = useOutletContext();
   const [locking, setLocking] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const closeBusy = useRef(false);
   const [uid, setUid] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
@@ -130,8 +132,14 @@ export default function NfcCheck() {
   }
 
   async function closeReception() {
-    try { await api('/auth/logout', { method: 'POST' }); window.location.assign('/'); }
-    catch { setErr('No se pudo cerrar la sesión. Intentá nuevamente.'); }
+    if (closeBusy.current) return;
+    closeBusy.current = true;
+    setClosing(true);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20000);
+    try { await api('/auth/logout', { method: 'POST', signal: controller.signal }); window.location.assign('/'); }
+    catch { setErr('No se pudo confirmar el cierre de sesión. Intentá nuevamente.'); }
+    finally { clearTimeout(timer); closeBusy.current = false; setClosing(false); }
   }
 
   async function lockAdministration() {
@@ -179,8 +187,8 @@ export default function NfcCheck() {
         <span>PRIMAL STRENGTH</span>
         <p>{result || err ? "La pantalla se prepara automáticamente para el próximo ingreso." : "¿Necesitás ayuda con tu pase? Acercate a recepción."}</p>
         <Link to="/admin/find">Volver a administración</Link>
-        {session?.role === 'admin' && <button type="button" disabled={locking || loading} onClick={lockAdministration} title="Mantiene el lector activo y pide la contraseña para volver a administrar socios">{locking ? 'Bloqueando…' : 'Bloquear administración'}</button>}
-        <button type="button" onClick={closeReception}>Cerrar sesión</button>
+        {session?.role === 'admin' && <button type="button" disabled={locking || loading || closing} onClick={lockAdministration} title="Mantiene el lector activo y pide la contraseña para volver a administrar socios">{locking ? 'Bloqueando…' : 'Bloquear administración'}</button>}
+        <button type="button" onClick={closeReception} disabled={closing || locking} aria-busy={closing}>{closing && <LoaderCircle size={16} className="motion-safe:animate-spin" aria-hidden="true" />}<span role="status">{closing ? 'Cerrando…' : 'Cerrar sesión'}</span></button>
       </footer>
       <audio ref={okRef} src={sfxOk} preload="auto" /><audio ref={errRef} src={sfxErr} preload="auto" />
     </main>

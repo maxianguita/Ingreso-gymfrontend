@@ -15,12 +15,19 @@ export default function RequireAccess({ role = 'admin' }) {
   const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
     let active = true;
-    api('/auth/me').then(value => { if (active) setSession(value); })
+    let sessionChanged = false;
+    api('/auth/me').then(value => { if (active && !sessionChanged) setSession(value); })
       .catch(error => { if (active && error.status !== 401) setError('No se pudo conectar con el servidor.'); })
       .finally(() => { if (active) setChecking(false); });
-    const expired = () => { setSession(null); setPassword(''); };
+    const expired = () => { sessionChanged = true; setSession(null); setPassword(''); };
+    const changed = event => { sessionChanged = true; setSession(event.detail); setPassword(''); };
     window.addEventListener('gym-session-expired', expired);
-    return () => { active = false; window.removeEventListener('gym-session-expired', expired); };
+    window.addEventListener('gym-session-changed', changed);
+    return () => {
+      active = false;
+      window.removeEventListener('gym-session-expired', expired);
+      window.removeEventListener('gym-session-changed', changed);
+    };
   }, []);
 
   async function login(event) {
