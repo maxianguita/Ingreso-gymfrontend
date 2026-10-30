@@ -2,6 +2,17 @@
 
 Frontend React/Vite de Primal Strength.
 
+## Gestión del gimnasio
+
+- `/resumen`: indicadores de recepción, cobros y últimos ingresos del día.
+- `/clientes`: búsqueda y ficha de socios, con filtro de pausados.
+- `/socios/:id`: edición, pausa, pagos, asistencias y llaveros perdidos.
+- `/asistencias`: historial con filtro de fechas y paginación.
+
+Estas pantallas requieren administrador y la versión del backend que incorpora
+`/api/management`. Publicar primero el backend; las tablas se crean al arrancar.
+Los pagos son registros de cobros recibidos, no procesamiento de tarjetas.
+
 ## Desarrollo
 
 `npm ci`, configurar `.env` a partir de `.env.example` y ejecutar `npm run dev`.

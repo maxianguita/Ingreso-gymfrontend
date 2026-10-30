@@ -8,6 +8,9 @@ import NotFound from "./Pages/NotFound";
 import Clients from "./Pages/Clients";
 import NfcCheck from "./Pages/NfcCheck";
 import RequireAccess from './components/RequireAccess';
+import Dashboard from './Pages/Dashboard';
+import MemberDetails from './Pages/MemberDetails';
+import Attendance from './Pages/Attendance';
 
 export default function App() {
   return (
@@ -16,6 +19,9 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route element={<RequireAccess />}>
+        <Route path="resumen" element={<Dashboard />} />
+        <Route path="asistencias" element={<Attendance />} />
+        <Route path="socios/:id" element={<MemberDetails />} />
         <Route path="admin">
           <Route path="create" element={<AdminCreate />} />
           <Route path="find" element={<AdminFind />} />

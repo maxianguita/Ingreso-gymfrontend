@@ -1,4 +1,5 @@
 import { API_BASE, authenticatedFetch as fetch } from "../lib/api";
+import { Link } from 'react-router-dom';
 // src/pages/AdminCreate.jsx
 import { useEffect, useMemo, useState } from "react";
 import logo from "../assets/Logo.jpg";
@@ -219,6 +220,7 @@ export default function AdminCreate() {
             <p className="text-gray-400 text-xs font-black uppercase tracking-widest mb-8">{created.name}</p>
 
             <div className="space-y-3">
+              <Link to={`/socios/${created.id}?tab=payments&renew=0`} className="flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-600">Registrar primer pago</Link>
               <button
                 onClick={onCopyLink}
                 className="w-full py-4 bg-white text-black rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-gray-200 transition-all"

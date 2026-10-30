@@ -1,4 +1,5 @@
 import { API_BASE, authenticatedFetch as fetch } from "../lib/api";
+import { Link } from 'react-router-dom';
 // src/pages/Clients.jsx
 import { useEffect, useRef, useState } from "react";
 import logo from "../assets/Logo.jpg";
@@ -91,6 +92,7 @@ function SearchBar({ value, onChange, loading, filter, setFilter, onClear, resul
         <FilterPill tone="ok" active={filter === "ok"} onClick={() => setFilter("ok")}>Vigentes</FilterPill>
         <FilterPill tone="warn" active={filter === "warn"} onClick={() => setFilter("warn")}>Por vencer</FilterPill>
         <FilterPill tone="off" active={filter === "off"} onClick={() => setFilter("off")}>Vencidos</FilterPill>
+        <FilterPill active={filter === 'paused'} onClick={() => setFilter('paused')}>Pausados</FilterPill>
       </div>
     </div>
   );
@@ -159,7 +161,7 @@ export default function Clients() {
   const [reload, setReload] = useState(0);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
-  const [renewingId, setRenewingId] = useState(null);
+
   const [toast, setToast] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -167,11 +169,6 @@ export default function Clients() {
 
   const limit = 12;
   const api = API_BASE;
-
-  useEffect(() => {
-    document.body.style.overflow = "auto";
-    return () => { document.body.style.overflow = "hidden"; };
-  }, []);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -204,24 +201,13 @@ export default function Clients() {
 
   useEffect(() => { setPage(1); }, [debouncedQ]);
 
-  async function renewClient(id) {
-    try {
-      setRenewingId(id);
-      const res = await fetch(`${api}/api/clients/${id}/renew`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setRows(prev => prev.map(r => (r.id === id ? { ...r, ...data } : r)));
-      setReload(value => value + 1);
-      setToast("Membresía Renovada ✅");
-      setTimeout(() => setToast(null), 2000);
-    } catch (e) { setErr(e.message); } finally { setRenewingId(null); }
-  }
+  function renewClient(id) { window.location.assign(`/socios/${id}?tab=payments&renew=30`); }
 
   async function deleteClient(id) {
     try {
       setDeletingId(id);
       const res = await fetch(`${api}/api/clients/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Error al eliminar");
+      if (!res.ok) { const error = await res.json(); throw new Error(error.error || "Error al eliminar"); }
       setRows(prev => prev.filter(r => r.id !== id));
       setTotal(t => Math.max(0, t - 1));
       setReload(value => value + 1);
@@ -287,11 +273,11 @@ export default function Clients() {
                   <tr><td colSpan={4} className="p-8 text-center text-gray-400">No se encontraron socios.</td></tr>
                 ) : rows.map((c) => {
                   const left = Number.isFinite(c.days_left) ? c.days_left : daysLeftFromISO(c.end_date);
-                  const tone = toneFromDays(left);
+                  const tone = c.is_paused ? 'default' : toneFromDays(left);
                   return (
                     <tr key={c.id} className={`hover:bg-white/[0.03] transition-colors ${rowTone[tone]}`}>
                       <td className="p-5">
-                        <div className="font-black text-white uppercase italic tracking-tight">{c.name}</div>
+                        <Link to={`/socios/${c.id}`} className="font-black text-white uppercase italic tracking-tight hover:underline">{c.name}</Link>
                         <div className="text-xs font-mono text-gray-400 mt-1">ID: {c.dni}</div>
                       </td>
                       <td className="p-5">
@@ -302,21 +288,22 @@ export default function Clients() {
                       </td>
                       <td className="p-5">
                         <Chip tone={tone}>
-                          {tone === "ok" ? "Vigente" : tone === "warn" ? (left === 0 ? "Vence hoy" : `Vence en ${left} días`) : tone === "off" ? "Vencido" : "Sin información"}
+                          {c.is_paused ? 'Pausado' : c.is_active === false && left >= 0 ? 'Inactivo' : tone === "ok" ? "Vigente" : tone === "warn" ? (left === 0 ? "Vence hoy" : `Vence en ${left} días`) : tone === "off" ? "Vencido" : "Sin información"}
                         </Chip>
                       </td>
                       <td className="p-5">
                         <div className="flex items-center justify-end gap-2">
+                          <Link to={`/socios/${c.id}`} className="inline-flex min-h-11 items-center rounded-xl border border-white/20 px-3 text-sm text-white hover:bg-white/10">Ver ficha</Link>
                           {tone !== "ok" && (
                             <button
                               onClick={() => renewClient(c.id)}
-                              disabled={renewingId === c.id}
+
                               className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 p-2.5 rounded-xl bg-emerald-600/10 text-emerald-400 hover:bg-emerald-700 hover:text-white transition-all border border-emerald-500/20 disabled:opacity-50"
-                              title="Renovar 30 días"
+                              title="Registrar pago y renovar"
                               aria-label={`Renovar membresía de ${c.name} por 30 días`}
                             >
-                              {renewingId === c.id ? <RefreshCcw size={16} className="animate-spin"/> : <RefreshCcw size={16}/>}
-                              <span className="hidden text-sm font-semibold lg:inline">{renewingId === c.id ? 'Renovando…' : 'Renovar'}</span>
+                              <RefreshCcw size={16}/>
+                              <span className="hidden text-sm font-semibold lg:inline">Renovar</span>
                             </button>
                           )}
                           <button

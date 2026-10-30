@@ -5,6 +5,7 @@ const states = {
   danger: { label: 'Por vencer', style: 'bg-amber-100 text-amber-900' },
   expired: { label: 'Vencido', style: 'bg-red-100 text-red-900' },
   inactive: { label: 'Inactivo', style: 'bg-slate-200 text-slate-800' },
+  paused: { label: 'Pausado', style: 'bg-slate-200 text-slate-800' },
 };
 
 export default function Badge({ status }) {

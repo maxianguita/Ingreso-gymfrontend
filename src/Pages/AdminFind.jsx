@@ -1,5 +1,6 @@
 import { API_BASE, authenticatedFetch as fetch } from "../lib/api";
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 import Badge from "../components/Badge";
 import logo from "../assets/Logo.jpg";
 import { Search, Calendar, User, Hash, Zap } from "lucide-react"; // Importa iconos si los tienes
@@ -23,7 +24,6 @@ export default function AdminFind() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [renewing, setRenewing] = useState(false);
-  const [toast, setToast] = useState(null);
 
   async function onFind() {
     setTag(""); setBoundTag("");
@@ -50,12 +50,7 @@ export default function AdminFind() {
     if (!found?.id) return;
     setErr(""); setRenewing(true);
     try {
-      const res = await fetch(`${API_BASE}/api/clients/${found.id}/renew`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setFound(data);
-      setToast("Renovado 30 días ✅");
-      setTimeout(() => setToast(null), 1800);
+      window.location.assign(`/socios/${found.id}?tab=payments&renew=30`);
     } catch (e) {
       setErr(e.message || "No se pudo renovar");
     } finally {
@@ -144,6 +139,7 @@ export default function AdminFind() {
           {/* Ficha del Socio Encontrado */}
           {found && (
             <div className="mt-8 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <Link to={`/socios/${found.id}`} className="block rounded-xl border border-white/20 p-4 text-center font-semibold text-white hover:bg-white/10">Abrir ficha: editar, pagos, asistencias y llavero</Link>
               <form onSubmit={onBind} className="rounded-2xl bg-black/40 p-4 space-y-3 text-white">
                 <label htmlFor="rfid-tag" className="block font-bold">Vincular o reemplazar llavero RFID</label>
                 <p className="text-sm text-gray-400">Seleccioná el campo y acercá el llavero al lector. Enter guarda la vinculación con {found.name}.</p>
@@ -201,12 +197,7 @@ export default function AdminFind() {
         </div>
       </div>
 
-      {/* Toast Animado */}
-      {toast && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 rounded-2xl bg-emerald-600 text-white px-8 py-4 shadow-2xl font-black uppercase tracking-widest text-xs animate-in slide-in-from-bottom-10">
-          {toast}
-        </div>
-      )}
+
     </section>
   );
 }
