@@ -82,7 +82,7 @@ export default function NavBar() {
           <img src={Logo} alt="Primal Strength" className="h-11 w-11 rounded-xl object-cover" />
           <div className="flex flex-col">
             <span className="text-[13px] font-extrabold uppercase tracking-[0.08em] text-white">Primal Strength</span>
-            <span className="mt-0.5 text-xs font-medium text-[#666666]">Panel de recepción</span>
+            <span aria-live="polite" className="mt-0.5 text-xs font-medium text-[#B8B8B8]">{session ? 'Bienvenido, Joel' : 'Panel de recepción'}</span>
           </div>
         </Link>
         <button ref={toggleRef} type="button" aria-controls="main-navigation" aria-expanded={open} aria-label={open ? "Cerrar menú" : "Abrir menú"} onClick={() => setOpen(value => !value)} className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg border border-[#EAEAEA] text-[#333333] lg:hidden">
