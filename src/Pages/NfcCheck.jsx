@@ -1,5 +1,6 @@
 
 import "./NfcCheck.css";
+import DumbbellBackground from '../components/DumbbellBackground';
 import {
   Check,
   AlertTriangle,
@@ -220,6 +221,7 @@ export default function NfcCheck() {
       className={`gym-entry gym-entry--${state}`}
       onPointerDown={unlockAudio}
     >
+      <DumbbellBackground state={state} />
       {/* ENCABEZADO PÚBLICO */}
       {/* <header className="entry-header">
         <div className="entry-brand">
