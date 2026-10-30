@@ -16,7 +16,7 @@ const navigation = [
 const navStyle = ({ isActive }) => [
   "flex min-h-11 items-center gap-2 rounded-lg px-3.5 py-2",
   "text-sm font-medium whitespace-nowrap transition-colors",
-  isActive ? "bg-[#F8EEF1] text-[#78263D]" : "text-[#666666] hover:bg-[#F7F7F7] hover:text-[#222222]",
+  isActive ? "bg-[#F8EEF1] text-[#78263D]" : "text-white hover:bg-[#F7F7F7] hover:text-[#222222]",
 ].join(" ");
 
 export default function NavBar() {
@@ -67,28 +67,28 @@ export default function NavBar() {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
-      // api publica el cambio de sesi?n solo cuando el servidor confirma el cierre.
+      // api publica el cambio de sesión solo cuando el servidor confirma el cierre.
       await api("/auth/logout", { method: "POST", signal: controller.signal });
       setOpen(false);
       navigate("/");
-    } catch { setLogoutError("No se pudo confirmar el cierre de sesi?n. Intent? nuevamente."); }
+    } catch { setLogoutError("No se pudo confirmar el cierre de sesión. Intentá nuevamente."); }
     finally { clearTimeout(timer); logoutBusy.current = false; setLoggingOut(false); }
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#EAEAEA] bg-white shadow-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-[#EAEAEA] bg-[#1F1E1E] shadow-sm">
       <div className="mx-auto flex min-h-[76px] max-w-[1440px] flex-wrap items-center gap-4 px-5 lg:px-8">
         <Link to="/" onClick={() => setOpen(false)} className="flex shrink-0 items-center gap-3">
           <img src={Logo} alt="Primal Strength" className="h-11 w-11 rounded-xl object-cover" />
           <div className="flex flex-col">
-            <span className="text-[13px] font-extrabold uppercase tracking-[0.08em] text-[#252525]">Primal Strength</span>
-            <span className="mt-0.5 text-xs font-medium text-[#666666]">Panel de recepci?n</span>
+            <span className="text-[13px] font-extrabold uppercase tracking-[0.08em] text-white">Primal Strength</span>
+            <span className="mt-0.5 text-xs font-medium text-[#666666]">Panel de recepción</span>
           </div>
         </Link>
-        <button ref={toggleRef} type="button" aria-controls="main-navigation" aria-expanded={open} aria-label={open ? "Cerrar men?" : "Abrir men?"} onClick={() => setOpen(value => !value)} className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg border border-[#EAEAEA] text-[#333333] lg:hidden">
+        <button ref={toggleRef} type="button" aria-controls="main-navigation" aria-expanded={open} aria-label={open ? "Cerrar menú" : "Abrir menú"} onClick={() => setOpen(value => !value)} className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg border border-[#EAEAEA] text-[#333333] lg:hidden">
           {open ? <X size={21} /> : <Menu size={21} />}
         </button>
-        <nav id="main-navigation" aria-label="Navegaci?n principal" className={[
+        <nav id="main-navigation" aria-label="Navegación principal" className={[
           open ? "flex" : "hidden",
           "w-full flex-col gap-1 border-t border-[#EEEEEE] pb-4 pt-4",
           "lg:ml-auto lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-1 lg:border-none lg:pb-0 lg:pt-0",
@@ -99,8 +99,8 @@ export default function NavBar() {
             </NavLink>
           ))}
           <div aria-hidden="true" className="my-2 h-px bg-[#EAEAEA] lg:mx-3 lg:my-0 lg:h-7 lg:w-px" />
-          <a href="/nfc" target="primal-nfc" rel="noopener noreferrer" onClick={() => setOpen(false)} title="Abrir lector NFC de recepci?n en otra pesta?a" className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#78263D] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#622033]">
-            <ScanLine size={18} strokeWidth={1.8} aria-hidden="true" />Ingreso NFC<ExternalLink size={13} className="opacity-70" aria-hidden="true" /><span className="sr-only"> (abre en otra pesta?a)</span>
+          <a href="/nfc" target="primal-nfc" rel="noopener noreferrer" onClick={() => setOpen(false)} title="Abrir lector NFC de recepción en otra pestaña" className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#78263D] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#622033]">
+            <ScanLine size={18} strokeWidth={1.8} aria-hidden="true" />Ingreso NFC<ExternalLink size={13} className="opacity-70" aria-hidden="true" /><span className="sr-only"> (abre en otra pestaña)</span>
           </a>
           <div aria-hidden="true" className="my-2 h-px bg-[#EAEAEA] lg:mx-2 lg:my-0 lg:h-7 lg:w-px" />
           {loggingOut || session === undefined ? (
@@ -113,7 +113,7 @@ export default function NavBar() {
             </button>
           ) : (
             <NavLink to="/admin/create" onClick={() => setOpen(false)} className={navStyle}>
-              <LogIn size={18} strokeWidth={1.8} aria-hidden="true" />Iniciar sesi?n
+              <LogIn size={18} strokeWidth={1.8} aria-hidden="true" />Iniciar sesión
             </NavLink>
           )}
         </nav>
