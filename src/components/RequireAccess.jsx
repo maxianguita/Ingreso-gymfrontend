@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { api } from '../lib/api';
 import logo from '../assets/Logo.jpg';
+import './RequireAccess.css';
 
 export default function RequireAccess({ role = 'admin' }) {
   const [session, setSession] = useState(null);
@@ -10,6 +12,7 @@ export default function RequireAccess({ role = 'admin' }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
     let active = true;
     api('/auth/me').then(value => { if (active) setSession(value); })
@@ -30,20 +33,34 @@ export default function RequireAccess({ role = 'admin' }) {
     finally { setBusy(false); }
   }
 
-  if (checking) return <p role="status" className="p-10 text-center">Comprobando acceso…</p>;
+  if (checking) return <main className={`primal-login ${role === 'reception' ? 'primal-login--fullscreen' : ''}`}><p role="status" className="primal-login-loading"><LoaderCircle size={18} aria-hidden="true" />Comprobando acceso…</p></main>;
   if (session && (role === 'reception' || session.role === 'admin')) return <Outlet context={session} />;
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 text-white">
-      <form onSubmit={login} className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#111] p-8 space-y-5">
-        <img src={logo} alt="Primal Strength" className="w-24 mx-auto rounded-xl" />
-        <h1 className="text-2xl font-bold">{role === 'admin' ? 'Administración' : 'Abrir recepción'}</h1>
-        <p className="text-sm text-gray-400">{session?.role === 'reception' ? 'Ingresá nuevamente para administrar socios.' : 'Ingresá con tu usuario y contraseña.'}</p>
-        <label className="block">Usuario<input autoComplete="username" required maxLength={40} value={username} onChange={e => setUsername(e.target.value)} className="block w-full mt-2 rounded-lg bg-black border border-white/20 p-3" /></label>
-        <label className="block">Contraseña<input type="password" autoComplete="current-password" required maxLength={256} value={password} onChange={e => setPassword(e.target.value)} className="block w-full mt-2 rounded-lg bg-black border border-white/20 p-3" /></label>
-        {error && <p role="alert" className="text-red-400">{error}</p>}
-        <button disabled={busy} className="w-full rounded-lg bg-red-700 p-3 font-bold disabled:opacity-50">{busy ? 'Ingresando…' : 'Ingresar'}</button>
-        <a href="/" className="block text-sm text-gray-400">Volver al inicio</a>
-      </form>
+    <main className={`primal-login ${role === 'reception' ? 'primal-login--fullscreen' : ''}`}>
+      <section className="primal-login-card" aria-labelledby="login-title">
+        <div className="primal-login-brand"><img src={logo} alt="" width="44" height="44" /><span>PRIMAL STRENGTH</span></div>
+        <header className="primal-login-intro">
+          <p className="primal-login-eyebrow">{role === 'admin' ? 'Administración' : 'Recepción'}</p>
+          <h1 id="login-title">Bienvenido de nuevo.</h1>
+          <p>{session?.role === 'reception' ? 'Ingresá nuevamente para administrar socios.' : role === 'admin' ? 'Ingresá para gestionar tu gimnasio.' : 'Ingresá para habilitar el control de acceso.'}</p>
+        </header>
+        <form onSubmit={login} className="primal-login-form" aria-busy={busy}>
+          <div className="primal-login-field">
+            <label htmlFor="login-username">Usuario</label>
+            <input id="login-username" name="username" autoComplete="username" autoCapitalize="none" spellCheck={false} required maxLength={40} value={username} onChange={e => setUsername(e.target.value)} disabled={busy} placeholder="Tu usuario" />
+          </div>
+          <div className="primal-login-field">
+            <label htmlFor="login-password">Contraseña</label>
+            <div className="primal-login-password">
+              <input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" required maxLength={256} value={password} onChange={e => setPassword(e.target.value)} disabled={busy} placeholder="Tu contraseña" aria-describedby={error ? 'login-error' : undefined} />
+              <button type="button" className="primal-login-reveal" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={showPassword} aria-controls="login-password" disabled={busy}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+            </div>
+          </div>
+          {error && <p id="login-error" role="alert" className="primal-login-error">{error}</p>}
+          <button type="submit" disabled={busy} className="primal-login-submit"><span>{busy ? 'Ingresando…' : 'Ingresar'}</span>{busy ? <LoaderCircle size={17} className="primal-login-spinner" aria-hidden="true" /> : <ArrowRight size={17} aria-hidden="true" />}</button>
+        </form>
+        <Link to="/" className="primal-login-back"><ArrowLeft size={15} aria-hidden="true" />Volver al inicio</Link>
+      </section>
     </main>
   );
 }

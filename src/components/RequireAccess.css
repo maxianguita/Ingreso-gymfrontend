@@ -1,0 +1,56 @@
+.primal-login {
+  min-height: calc(100svh - 88px);
+  display: grid;
+  place-items: center;
+  padding: 48px 20px;
+  background: #0c0d0f;
+  color: #f3f3f4;
+}
+
+.primal-login--fullscreen { min-height: 100svh; }
+
+.primal-login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 36px;
+  border: 1px solid #27282d;
+  border-radius: 16px;
+  background: #121316;
+  box-shadow: 0 16px 48px #00000018;
+}
+
+.primal-login-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+.primal-login-brand img { width: 44px; height: 44px; border: 1px solid #303137; border-radius: 50%; object-fit: cover; }
+.primal-login-brand span { font-size: 12px; font-weight: 650; letter-spacing: .14em; }
+.primal-login-eyebrow { margin: 0 0 10px; color: #e38a91; font-size: 12px; font-weight: 550; }
+.primal-login-intro h1 { margin: 0; font-size: clamp(25px, 5vw, 29px); font-weight: 600; line-height: 1.25; letter-spacing: -.035em; }
+.primal-login-intro > p:last-child { margin: 12px 0 28px; color: #a8a9b0; font-size: 14px; line-height: 1.6; }
+.primal-login-form { display: grid; gap: 20px; }
+.primal-login-field { display: grid; gap: 9px; }
+.primal-login-field label { font-size: 13px; font-weight: 500; color: #d6d6dc; }
+.primal-login-field input { width: 100%; min-width: 0; height: 48px; padding: 0 14px; border: 1px solid #36373f; border-radius: 8px; background: #0e0f12; color: #f3f3f4; font: inherit; font-size: 16px; transition: border-color .15s, box-shadow .15s; }
+.primal-login-field input::placeholder { color: #83848e; }
+.primal-login-field input:focus { outline: none; border-color: #d55965; box-shadow: 0 0 0 3px #d559651a; }
+.primal-login-field input:disabled { opacity: .65; }
+.primal-login-password { position: relative; }
+.primal-login-password input { padding-right: 50px; }
+.primal-login-reveal { position: absolute; top: 2px; right: 2px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 6px; color: #a8a9b0; cursor: pointer; }
+.primal-login-reveal:hover { color: #fff; }
+.primal-login-submit { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; margin-top: 4px; padding: 12px 20px; border: 1px solid #bd3847; border-radius: 8px; background: #b62f3e; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s; }
+.primal-login-submit:hover { background: #c63948; }
+.primal-login-submit:disabled, .primal-login-reveal:disabled { cursor: wait; opacity: .65; }
+.primal-login-error { margin: 0; padding: 11px 13px; border: 1px solid #74323b; border-radius: 8px; background: #2a171c; color: #ffb9c0; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.primal-login-back { display: flex; width: fit-content; min-height: 44px; align-items: center; gap: 7px; margin: 20px auto -8px; color: #b2b2ba; font-size: 13px; text-decoration: none; }
+.primal-login-back:hover { color: #fff; }
+.primal-login-loading { display: flex; align-items: center; gap: 10px; color: #b2b2ba; font-size: 14px; }
+.primal-login-loading svg, .primal-login-spinner { animation: primal-login-spin 1s linear infinite; }
+@keyframes primal-login-spin { to { transform: rotate(360deg); } }
+@media (max-width: 480px) {
+  .primal-login { padding: 28px 16px; }
+  .primal-login-card { padding: 28px 24px; }
+  .primal-login-brand { margin-bottom: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .primal-login-loading svg, .primal-login-spinner { animation: none; }
+  .primal-login-field input, .primal-login-submit { transition: none; }
+}
